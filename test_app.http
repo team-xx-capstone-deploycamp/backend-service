@@ -1,0 +1,57 @@
+@base = http://localhost:8000
+# For prod, override:
+# @base = https://api.yourdomain.com
+
+# Default creds from .env.example (change in prod!)
+@auth_basic = YWRtaW46Y2hhbmdlbWU=   // base64("admin:changeme")
+
+###
+# Health
+GET {{base}}/healthz
+
+###
+# Ping
+GET {{base}}/v1/ping
+
+###
+# Predict (UNAUTHORIZED — expect 401)
+POST {{base}}/v1/predict
+Content-Type: application/json
+
+{
+  "features": [2015, 50000, 1.6, 120, 5]
+}
+
+###
+# Predict with partial record (recommended)
+POST {{base}}/v1/predict
+Content-Type: application/json
+Authorization: Basic {{auth_basic}}
+
+{
+  "record": {
+    "CarName": "toyota corolla",
+    "enginesize": 130,
+    "horsepower": 100,
+    "citympg": 28
+  }
+}
+
+###
+# Predict with full 25-length feature list (must match FEATURE_COLUMNS order)
+POST {{base}}/v1/predict
+Content-Type: application/json
+Authorization: Basic {{auth_basic}}
+
+{
+  "features": [0,0,"toyota corolla","gas","std","four","sedan","fwd","front",96.5,175.4,65.2,54.1,2330,"ohc","four",130,"mpfi",3.47,2.68,9.0,100,5500,28,34]
+}
+
+
+###
+# Swagger UI
+GET {{base}}/docs
+
+###
+# OpenAPI JSON
+GET {{base}}/openapi.json

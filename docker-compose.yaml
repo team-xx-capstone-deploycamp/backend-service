@@ -1,0 +1,24 @@
+services:
+  backend-dev:
+    profiles: ["dev"]
+    build: .
+    container_name: backend-dev
+    env_file:
+      - .env
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./app:/app/app
+      - ./model:/app/model:ro
+    command: uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload
+
+  backend:
+    profiles: ["prod"]
+    image: "${IMAGE_URL}"
+    container_name: backend
+    env_file:
+      - .env
+    volumes:
+      - ./model:/app/model:ro
+    ports:
+      - "8000:8000"
