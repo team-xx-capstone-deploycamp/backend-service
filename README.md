@@ -69,7 +69,13 @@ docker run -p 8000:8000 backend-service
 
 ### Testing
 
-You can test the API endpoints using the provided `test_main.http` file with tools like REST Client for VS Code.
+You can test the API endpoints using the provided `test_app.http` file with tools like REST Client for VS Code.
+
+To run the automated test suite, execute:
+
+```bash
+pytest
+```
 
 ## CI/CD
 
