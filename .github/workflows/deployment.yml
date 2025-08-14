@@ -49,9 +49,13 @@ jobs:
       - name: Extract deployment tag
         id: extract-tag
         run: |
-          TAG="${{ env.REGISTRY }}/${{ env.BASE_IMAGE_NAME }}:${{ steps.semantic.outputs.new_release_version }}"
+          if [ "${{ steps.semantic.outcome }}" == "success" ] && [ -n "${{ steps.semantic.outputs.new_release_version }}" ]; then
+            TAG="${{ env.REGISTRY }}/${{ env.BASE_IMAGE_NAME }}:${{ steps.semantic.outputs.new_release_version }}"
+          else
+            TAG="${{ env.REGISTRY }}/${{ env.BASE_IMAGE_NAME }}:latest"
+          fi
           echo "tag=${TAG}" >> $GITHUB_OUTPUT
-          echo "Deployment tag: ${TAG}"
+          echo "Using tag: ${TAG}"
 
       - name: Build and Push Docker Image
         id: build
@@ -59,8 +63,8 @@ jobs:
         with:
           push: true
           tags: |
-            ${{ env.REGISTRY }}/${{ env.BASE_IMAGE_NAME }}:${{ steps.semantic.outputs.new_release_version }}
-            ${{ env.REGISTRY }}/${{ env.BASE_IMAGE_NAME }}:latest
+              ${{ steps.set-tag.outputs.tag }}
+              ${{ env.REGISTRY }}/${{ env.BASE_IMAGE_NAME }}:latest
             
   security-scan:
     runs-on: ubuntu-latest
