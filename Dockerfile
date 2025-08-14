@@ -6,10 +6,8 @@ ENV PYTHONDONTWRITEBYTECODE=1 \
 
 WORKDIR /app
 
-# Optional build tools in case wheels aren't available for your platform;
-# comment these lines if you want the absolute slimmest image and your deps install fine without them.
 RUN apt-get update && apt-get install -y --no-install-recommends \
-    libgomp1 build-essential \
+    libgomp1=12.2.0-14 build-essential=12.12 \
   && rm -rf /var/lib/apt/lists/*
 
 COPY requirements.txt .
