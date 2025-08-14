@@ -4,7 +4,6 @@ on:
   push:
     branches:
       - prod
-      - main
 env:
   REGISTRY: ghcr.io
   IMAGE_NAME: ${{ github.repository }}
@@ -43,7 +42,7 @@ jobs:
             @semantic-release/changelog
             @semantic-release/git
           branches: |
-            ['prod', 'main']
+            ['prod']
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
@@ -166,7 +165,7 @@ jobs:
           scp -r app/* ${{ secrets.VPS_USERNAME }}@${{ secrets.VPS_HOST }}:~/backend-service/app
           scp -r model/* ${{ secrets.VPS_USERNAME }}@${{ secrets.VPS_HOST }}:~/backend-service/model
           scp -r .env ${{ secrets.VPS_USERNAME }}@${{ secrets.VPS_HOST }}:~/backend-service/
-          scp -r docker-compose.yml ${{ secrets.VPS_USERNAME }}@${{ secrets.VPS_HOST }}:~/backend-service/
+          scp -r docker-compose.yaml ${{ secrets.VPS_USERNAME }}@${{ secrets.VPS_HOST }}:~/backend-service/
 
       - name: Update Image
         run: |
