@@ -14,8 +14,10 @@ jobs:
     runs-on: ubuntu-latest
     name: Build
     permissions:
-      contents: read
+      contents: write
       packages: write
+      issues: write
+      pull-requests: write
     outputs:
       image-digest: ${{ steps.build.outputs.digest }}
       image-name: ${{ env.REGISTRY }}/${{ env.BASE_IMAGE_NAME }}
@@ -39,6 +41,8 @@ jobs:
           extra_plugins: |
             @semantic-release/changelog
             @semantic-release/git
+          branches: |
+            ['prod']
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
@@ -161,7 +165,7 @@ jobs:
           scp -r app/* ${{ secrets.VPS_USERNAME }}@${{ secrets.VPS_HOST }}:~/backend-service/app
           scp -r model/* ${{ secrets.VPS_USERNAME }}@${{ secrets.VPS_HOST }}:~/backend-service/model
           scp -r .env ${{ secrets.VPS_USERNAME }}@${{ secrets.VPS_HOST }}:~/backend-service/
-          scp -r docker-compose.yml ${{ secrets.VPS_USERNAME }}@${{ secrets.VPS_HOST }}:~/backend-service/
+          scp -r docker-compose.yaml ${{ secrets.VPS_USERNAME }}@${{ secrets.VPS_HOST }}:~/backend-service/
 
       - name: Update Image
         run: |
