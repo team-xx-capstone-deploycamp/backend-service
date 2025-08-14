@@ -22,3 +22,9 @@ services:
       - ./model:/app/model:ro
     ports:
       - "8000:8000"
+    networks:
+      - shared_network
+
+networks:
+  shared_network:
+    external: true

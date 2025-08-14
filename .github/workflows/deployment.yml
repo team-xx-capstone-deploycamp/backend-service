@@ -165,8 +165,8 @@ jobs:
 
       - name: Update Image
         run: |
-          ssh ${{ secrets.VPS_USERNAME }}@${{ secrets.VPS_HOST }} "cd ~/backend-service && export $(cat .env | xargs) && envsubst < docker-compose.yml > docker-compose.yml.tmp && mv docker-compose.yml.tmp docker-compose.yml"
+          ssh ${{ secrets.VPS_USERNAME }}@${{ secrets.VPS_HOST }} "cd ~/backend-service && export $(cat .env | xargs) && envsubst < docker-compose.yaml > docker-compose.yaml.tmp && mv docker-compose.yaml.tmp docker-compose.yaml"
 
       - name: Deploy or Restart Service on VPS
         run: |
-          ssh ${{ secrets.VPS_USERNAME }}@${{ secrets.VPS_HOST }} "cd ~/backend-service && docker compose -f docker-compose.yml --env-file .env up -d backend"
+          ssh ${{ secrets.VPS_USERNAME }}@${{ secrets.VPS_HOST }} "cd ~/backend-service && docker compose -f docker-compose.yaml --env-file .env up -d backend"
