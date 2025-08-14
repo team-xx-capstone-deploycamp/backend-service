@@ -1,0 +1,119 @@
+name: CI Pipeline
+on:
+  pull_request:
+    branches:
+      - prod
+    types: [opened, synchronize]
+
+env:
+  REGISTRY: ghcr.io
+  IMAGE_NAME: ${{ github.repository }}
+  BASE_IMAGE_NAME: ${{ github.repository }}
+
+jobs:
+  code-quality:
+    runs-on: ubuntu-latest
+    name: Code Quality
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.11'
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@v3
+        with:
+          version: "latest"
+
+      - name: Dependency Scan
+        uses: pypa/gh-action-pip-audit@v1.0.8
+        with:
+          inputs: 'requirements.txt'
+
+      - name: Dockerfile Lint
+        uses: hadolint/hadolint-action@v3.1.0
+        with:
+          dockerfile: Dockerfile
+
+  test:
+    runs-on: ubuntu-latest
+    name: Tests
+    needs: code-quality
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.11'
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@v3
+        with:
+          version: "latest"
+
+      - name: Cache uv dependencies
+        uses: actions/cache@v3
+        with:
+          path: ~/.cache/uv
+          key: uv-${{ runner.os }}-${{ hashFiles('docker/luigi/requirements.txt') }}
+          restore-keys: |
+            uv-${{ runner.os }}-
+
+      - name: Create virtual environment
+        run: uv venv .venv
+
+      - name: Install test dependencies
+        run: |
+          uv pip install pytest pytest-cov
+
+      - name: Install project dependencies
+        run: |
+          if [ -f requirements.txt ]; then 
+          echo "Installing from requirements.txt"
+          uv pip install -r requirements.txt
+          else
+          echo "Warning: requirements.txt not found"
+          exit 1
+          fi
+
+      - name: Verify installation
+        run: |
+          uv pip list
+
+      - name: Run Tests
+        run: |
+          source .venv/bin/activate
+          pytest --cov=. --cov-report=xml --cov-report=term --verbose
+
+      - name: Upload coverage
+        uses: codecov/codecov-action@v3
+        with:
+          file: ./coverage.xml
+          flags: backend-service
+
+  sonarcloud-analysis:
+    runs-on: ubuntu-latest
+    name: SonarCloud Analysis
+    needs: [ test ]
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      # Download coverage reports
+      - name: Download coverage reports
+        uses: actions/download-artifact@v4
+        continue-on-error: true
+        with:
+          name: coverage-reports
+          path: ./coverage/
+
+      - name: SonarCloud Scan
+        uses: SonarSource/sonarqube-scan-action@v5
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+
