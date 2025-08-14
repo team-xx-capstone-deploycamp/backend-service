@@ -1,0 +1,15 @@
+{
+  "name": "backend-service",
+  "version": "0.0.0-development",
+  "private": true,
+  "release": {
+    "branches": ["main", "prod"],
+    "plugins": [
+      "@semantic-release/commit-analyzer",
+      "@semantic-release/release-notes-generator",
+      "@semantic-release/github",
+      "@semantic-release/changelog",
+      "@semantic-release/git"
+    ]
+  }
+}

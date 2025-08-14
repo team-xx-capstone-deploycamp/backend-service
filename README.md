@@ -1,7 +1,7 @@
 # Backend Service
 
-[![Code Scanning](https://github.com/team-xx-capstone-deploycamp/backend-service/actions/workflows/code-scanning.yml/badge.svg)](https://github.com/team-xx/backend-service/actions/workflows/code-scanning.yml)
-[![Deployment](https://github.com/team-xx-capstone-deploycamp/backend-service/actions/workflows/deployment.yml/badge.svg)](https://github.com/team-xx/backend-service/actions/workflows/deployment.yml)
+[![CI](https://github.com/team-xx-capstone-deploycamp/backend-service/actions/workflows/ci.yml/badge.svg)](https://github.com/team-xx-capstone-deploycamp/backend-service/actions/workflows/ci.yml)
+[![Deployment](https://github.com/team-xx-capstone-deploycamp/backend-service/actions/workflows/deployment.yml/badge.svg)](https://github.com/team-xx-capstone-deploycamp/backend-service/actions/workflows/deployment.yml)
 
 A simple FastAPI backend service that provides REST API endpoints.
 

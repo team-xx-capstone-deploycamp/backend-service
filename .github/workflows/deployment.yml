@@ -4,6 +4,7 @@ on:
   push:
     branches:
       - prod
+      - main
 env:
   REGISTRY: ghcr.io
   IMAGE_NAME: ${{ github.repository }}
@@ -14,8 +15,10 @@ jobs:
     runs-on: ubuntu-latest
     name: Build
     permissions:
-      contents: read
+      contents: write
       packages: write
+      issues: write
+      pull-requests: write
     outputs:
       image-digest: ${{ steps.build.outputs.digest }}
       image-name: ${{ env.REGISTRY }}/${{ env.BASE_IMAGE_NAME }}
@@ -39,6 +42,8 @@ jobs:
           extra_plugins: |
             @semantic-release/changelog
             @semantic-release/git
+          branches: |
+            ['prod', 'main']
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
