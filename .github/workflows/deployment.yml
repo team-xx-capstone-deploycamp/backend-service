@@ -63,7 +63,7 @@ jobs:
         with:
           push: true
           tags: |
-              ${{ steps.set-tag.outputs.tag }}
+              ${{ steps.extract-tag.outputs.tag }}
               ${{ env.REGISTRY }}/${{ env.BASE_IMAGE_NAME }}:latest
             
   security-scan:
